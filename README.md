@@ -1,3 +1,11 @@
-# 🕸️ Scrapper 
+<h1 align="center">
+  🕸️ Scrapper
+</h1>
 
-Run with `npm run start`
+## 🚀 Run
+
+Run with :
+
+```
+npm run start
+```
