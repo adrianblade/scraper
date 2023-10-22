@@ -2,9 +2,9 @@
   "name": "scraper",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/src/index.js",
+  "main": "dist/src/config/index.js",
   "scripts": {
-    "start": "npx tsc && node dist/index.js",
+    "start": "npx tsc && node dist/config/index.js",
     "test": "jest"
   },
   "keywords": [],
