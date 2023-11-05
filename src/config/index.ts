@@ -8,6 +8,8 @@ import { TelegramRepositoryImplementation } from "../infrastructure/repositories
 import dotenv from 'dotenv'
 import fs from 'fs'
 import { TelegramApiClient } from "../infrastructure/repositories/telegram_client";
+import { GetMe } from "../core/domain/use-cases/get_me";
+import { GetUpdates } from "../core/domain/use-cases/get_updates";
 
 const cheerioHtmlRetriever = new CheerioHtmlRetriever();
 
@@ -32,6 +34,8 @@ ecommerceCrawlertMap.set('zalando', zalandoEcommerceCrawler)
 
 
 const getSneakers = new GetSneakers(cheerioHtmlRetriever, ecommerceCrawlertMap)
+const getMe = new GetMe(telegramRepository)
+const getUpdates = new GetUpdates(telegramRepository)
 
 //NIKE
 /*getSneakers.execute("https://www.nike.com", "/es/w?q=air%20force%201&vst=air%20force")
@@ -44,7 +48,15 @@ const getSneakers = new GetSneakers(cheerioHtmlRetriever, ecommerceCrawlertMap)
     .catch((error) => console.log(error));*/
 
 // ZALANDO
-getSneakers.execute("https://www.zalando.es", "/catalogo/?q=air+force+1")
+/*getSneakers.execute("https://www.zalando.es", "/catalogo/?q=air+force+1")
     .then((sneakers) => telegramRepository.sendMessage(sneakers))
     .then((msg) => console.info(msg))
-    .catch((error) => console.info(error));
+    .catch((error) => console.info(error));*/
+
+// GET USER
+/*getMe.execute()
+    .then((user) => console.log(user))*/
+
+// GET UPDATES
+/*getUpdates.execute()
+    .then((updates) => console.log(updates))*/

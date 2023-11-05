@@ -1,7 +1,7 @@
 import { Failure, FailureApi } from "../../core/domain/entities/failures";
 import { TelegramRepository } from "../../core/repositories/telegram_repository";
 import { TelegramApiClient } from "./telegram_client";
-import { Message } from "telegram-bot-ts-types";
+import { Message, Update, User } from "telegram-bot-ts-types";
 
 
 const MAX_ATTEMP = 3
@@ -14,6 +14,32 @@ export class TelegramRepositoryImplementation implements TelegramRepository {
 		this.telegramApiClient = telegramApiClient
         this.chat_id = chat_id;
 	}
+
+    getUpdates = async () : Promise<Update[] | Failure> => {
+        let response = await this.telegramApiClient.execute('getUpdates');
+        if (response instanceof Failure) {
+            return response;
+        }
+
+        if (!this.checkResponse(response)) {
+            return new FailureApi();
+        }
+
+        return JSON.parse(response)['result'];
+    }
+
+    getMe = async () : Promise<User | Failure> => {
+        let response = await this.telegramApiClient.execute('getMe');
+        if (response instanceof Failure) {
+            return response;
+        }
+
+        if (!this.checkResponse(response)) {
+            return new FailureApi();
+        }
+
+        return JSON.parse(response)['result'];
+    }
     
     sendMessage = async (sneakers: Sneaker[]) : Promise<Message | Failure> => {
         let response = await this.telegramApiClient.execute('sendMessage', 
@@ -33,26 +59,26 @@ export class TelegramRepositoryImplementation implements TelegramRepository {
             return JSON.parse(response)['result'];
         }
 
-        writeSneakers = (sneakers: Sneaker[]) : string => {
-            let result = ""
-            sneakers.forEach((sneaker) => result += this.writeSneaker(sneaker))
-            return result
-        }
+    writeSneakers = (sneakers: Sneaker[]) : string => {
+        let result = ""
+        sneakers.forEach((sneaker) => result += this.writeSneaker(sneaker))
+        return result
+    }
 
-        writeSneaker = (sneaker: Sneaker) : string => {
-            return `
-            <b>${sneaker.name}</b>
-            <b>${sneaker.prices[0]}</b>
-            <a href="${sneaker.href}">${sneaker.name}</a> 
-            `
-        }
+    writeSneaker = (sneaker: Sneaker) : string => {
+        return `
+        <b>${sneaker.name}</b>
+        <b>${sneaker.prices[0]}</b>
+        <a href="${sneaker.href}">${sneaker.name}</a> 
+        `
+    }
 
-        private checkResponse(response: string): boolean {
-            try {
-                let jsonResponse = JSON.parse(response);
-                return (typeof jsonResponse === 'object' && 'ok' in jsonResponse && 'result' in jsonResponse && jsonResponse.ok);
-            } catch (e) { }
-    
-            return false;
-        }
+    private checkResponse(response: string): boolean {
+        try {
+            let jsonResponse = JSON.parse(response);
+            return (typeof jsonResponse === 'object' && 'ok' in jsonResponse && 'result' in jsonResponse && jsonResponse.ok);
+        } catch (e) { }
+
+        return false;
+    }
 }
