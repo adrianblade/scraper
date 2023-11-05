@@ -1,3 +1,6 @@
+import Message from "telegram-bot-ts-types/build/entities/message";
+import { Failure } from "../domain/entities/failures";
+
 export interface Notificator {
-    sendNotification: (message: String) => Promise<void>
+    sendNotification: (sneakers: Sneaker[]) => Promise<Message | Failure>
 }

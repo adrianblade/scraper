@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/cheerio": "^0.22.33",
     "@types/node": "^20.8.7",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "telegram-bot-ts-types": "1.4.0"
   }
 }

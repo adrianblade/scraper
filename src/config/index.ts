@@ -7,6 +7,7 @@ import { ZalandoEcommerceCrawler } from "../infrastructure/repositories/ZalandoE
 import { TelegramNotificator } from "../infrastructure/repositories/TelegramNotificator";
 import dotenv from 'dotenv'
 import fs from 'fs'
+import { TelegramApiClient } from "../infrastructure/repositories/telegram_client";
 
 const cheerioHtmlRetriever = new CheerioHtmlRetriever();
 
@@ -21,7 +22,8 @@ let localOrNot = () : string => {
 dotenv.config(({ path: localOrNot() }))
 const apiToken = process.env.TELEGRAM_API_TOKEN
 const chat_id = process.env.TELEGRAM_CHAT_ID
-const notificator = new TelegramNotificator(apiToken, chat_id);
+const telegram_client = new TelegramApiClient(apiToken)
+const notificator = new TelegramNotificator(chat_id, telegram_client);
 
 let ecommerceCrawlertMap: Map<string, EcommerceCrawler> = new Map<string, EcommerceCrawler>();
 ecommerceCrawlertMap.set('adidas', adidasEcommerceCrawler)
@@ -32,18 +34,17 @@ ecommerceCrawlertMap.set('zalando', zalandoEcommerceCrawler)
 const getSneakers = new GetSneakers(cheerioHtmlRetriever, ecommerceCrawlertMap)
 
 //NIKE
-getSneakers.execute("https://www.nike.com", "/es/w?q=air%20force%201&vst=air%20force")
-    .then((users) => console.log(users))
-    .catch((error) => console.log(error));
+/*getSneakers.execute("https://www.nike.com", "/es/w?q=air%20force%201&vst=air%20force")
+    .then((sneakers) => console.log(sneakers))
+    .catch((error) => console.log(error));*/
 
 //ADIDAS IN PROGRESS
 /*getSneakers.execute("https://www.adidas.es", "/accesorios-gimnasio_y_entrenamiento")
-    .then((users) => console.log(users))
+    .then((sneakers) => console.log(sneakers))
     .catch((error) => console.log(error));*/
 
 // ZALANDO
 getSneakers.execute("https://www.zalando.es", "/catalogo/?q=air+force+1")
-    .then((users) => console.log(users))
-    .catch((error) => console.log(error));
-
-//notificator.sendNotification("hello from there!")
+    .then((sneakers) => notificator.sendNotification(sneakers))
+    .then((msg) => console.info(msg))
+    .catch((error) => console.info(error));
