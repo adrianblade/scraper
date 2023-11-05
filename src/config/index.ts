@@ -4,7 +4,7 @@ import { GetSneakers } from "../core/domain/use-cases/getSneakers";
 import { AdidasEcommerceCrawler } from "../infrastructure/repositories/AdidasEcommerceCrawler";
 import { EcommerceCrawler } from "../core/repositories/EcommerceCrawler";
 import { ZalandoEcommerceCrawler } from "../infrastructure/repositories/ZalandoEcommerceCrawler";
-import { TelegramNotificator } from "../infrastructure/repositories/TelegramNotificator";
+import { TelegramRepositoryImplementation } from "../infrastructure/repositories/telegram_repository_implementation";
 import dotenv from 'dotenv'
 import fs from 'fs'
 import { TelegramApiClient } from "../infrastructure/repositories/telegram_client";
@@ -23,7 +23,7 @@ dotenv.config(({ path: localOrNot() }))
 const apiToken = process.env.TELEGRAM_API_TOKEN
 const chat_id = process.env.TELEGRAM_CHAT_ID
 const telegram_client = new TelegramApiClient(apiToken)
-const notificator = new TelegramNotificator(chat_id, telegram_client);
+const telegramRepository = new TelegramRepositoryImplementation(chat_id, telegram_client);
 
 let ecommerceCrawlertMap: Map<string, EcommerceCrawler> = new Map<string, EcommerceCrawler>();
 ecommerceCrawlertMap.set('adidas', adidasEcommerceCrawler)
@@ -45,6 +45,6 @@ const getSneakers = new GetSneakers(cheerioHtmlRetriever, ecommerceCrawlertMap)
 
 // ZALANDO
 getSneakers.execute("https://www.zalando.es", "/catalogo/?q=air+force+1")
-    .then((sneakers) => notificator.sendNotification(sneakers))
+    .then((sneakers) => telegramRepository.sendMessage(sneakers))
     .then((msg) => console.info(msg))
     .catch((error) => console.info(error));

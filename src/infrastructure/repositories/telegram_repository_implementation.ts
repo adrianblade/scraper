@@ -1,12 +1,12 @@
 import { Failure, FailureApi } from "../../core/domain/entities/failures";
-import { Notificator } from "../../core/repositories/Notificator";
+import { TelegramRepository } from "../../core/repositories/telegram_repository";
 import { TelegramApiClient } from "./telegram_client";
 import { Message } from "telegram-bot-ts-types";
 
 
 const MAX_ATTEMP = 3
 
-export class TelegramNotificator implements Notificator {
+export class TelegramRepositoryImplementation implements TelegramRepository {
     private telegramApiClient: TelegramApiClient
     private readonly chat_id: string;
 
@@ -15,7 +15,7 @@ export class TelegramNotificator implements Notificator {
         this.chat_id = chat_id;
 	}
     
-    sendNotification = async (sneakers: Sneaker[]) : Promise<Message | Failure> => {
+    sendMessage = async (sneakers: Sneaker[]) : Promise<Message | Failure> => {
         let response = await this.telegramApiClient.execute('sendMessage', 
             JSON.stringify({
                 chat_id: this.chat_id,
